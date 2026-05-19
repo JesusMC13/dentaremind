@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  // ========== CAMBIAR A localStorage ==========
+  // ========== CONFIGURACIÓN ==========
   const STORES = ["patients", "treatments", "sessions", "materials", "jobs", "appointments"];
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -24,7 +24,7 @@
 
   function add(storeName, item) {
     const store = getStore(storeName);
-    const newId = Date.now() + Math.random() * 1000;
+    const newId = Date.now();
     const newItem = { ...item, id: newId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     store.push(newItem);
     setStore(storeName, store);
@@ -54,10 +54,6 @@
 
   function all(storeName) {
     return getStore(storeName);
-  }
-
-  function clearStore(storeName) {
-    setStore(storeName, []);
   }
 
   // ========== FUNCIONES AUXILIARES ==========
@@ -113,19 +109,23 @@
 
   function fillPatientSelect(select, selectedId) {
     if (!select) return;
+    
+    pacientesCache = getStore("patients");
+    
     if (!pacientesCache.length) {
       select.innerHTML = `<option value="">Primero crea un paciente</option>`;
       return;
     }
-    select.innerHTML = pacientesCache
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((p) => `<option value="${p.id}" ${Number(selectedId) === Number(p.id) ? "selected" : ""}>${escapeHTML(p.name)}</option>`)
-      .join("");
+    
+    select.innerHTML = `<option value="">Seleccionar paciente...</option>` + 
+      pacientesCache
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((p) => `<option value="${p.id}" ${Number(selectedId) === Number(p.id) ? "selected" : ""}>${escapeHTML(p.name)}</option>`)
+        .join("");
   }
 
   // ========== INICIALIZACIÓN ==========
   document.addEventListener("DOMContentLoaded", async () => {
-    // Cargar datos iniciales
     pacientesCache = await all("patients");
     tratamientosCache = await all("treatments");
     sesionesCache = await all("sessions");
@@ -362,14 +362,19 @@
   // ========== TRATAMIENTOS ==========
   async function initTratamientos() {
     pacientesCache = await all("patients");
+    
     const btnNuevo = $("#btnNuevoTratamiento");
     if (btnNuevo) btnNuevo.addEventListener("click", () => showTreatmentForm());
+    
     const btnCancelar = $("#btnCancelarTratamiento");
     if (btnCancelar) btnCancelar.addEventListener("click", () => closePanel($("#panelTratamiento")));
+    
     const buscar = $("#buscarTratamiento");
     if (buscar) buscar.addEventListener("input", renderTratamientos);
+    
     const form = $("#formTratamiento");
     if (form) form.addEventListener("submit", saveTreatment);
+    
     await loadTratamientos();
   }
 
@@ -380,17 +385,26 @@
   }
 
   function showTreatmentForm(treatment) {
-    fillPatientSelect($("#tratamientoPaciente"), treatment?.patientId);
+    pacientesCache = getStore("patients");
+    
+    const pacienteSelect = $("#tratamientoPaciente");
+    fillPatientSelect(pacienteSelect, treatment?.patientId);
+    
     const titulo = $("#tituloTratamiento");
     if (titulo) titulo.textContent = treatment ? "Editar tratamiento" : "Nuevo tratamiento";
+    
     const idInput = $("#tratamientoId");
     if (idInput) idInput.value = treatment?.id || "";
+    
     const nombreInput = $("#tratamientoNombre");
     if (nombreInput) nombreInput.value = treatment?.name || "";
+    
     const costoInput = $("#tratamientoCosto");
     if (costoInput) costoInput.value = treatment?.totalCost || "";
+    
     const sesionesInput = $("#tratamientoSesionesTotal");
     if (sesionesInput) sesionesInput.value = treatment?.totalSessions || "";
+    
     openPanel($("#panelTratamiento"));
   }
 
@@ -672,17 +686,22 @@
     await loadMateriales();
   }
 
-  // ========== TRABAJOS ==========
+  // ========== TRABAJOS EXTERNOS ==========
   async function initTrabajos() {
     pacientesCache = await all("patients");
+    
     const btnNuevo = $("#btnNuevoTrabajo");
     if (btnNuevo) btnNuevo.addEventListener("click", () => showJobForm());
+    
     const btnCancelar = $("#btnCancelarTrabajo");
     if (btnCancelar) btnCancelar.addEventListener("click", () => closePanel($("#panelTrabajo")));
+    
     const form = $("#formTrabajo");
     if (form) form.addEventListener("submit", saveJob);
+    
     const buscar = $("#buscarTrabajo");
     if (buscar) buscar.addEventListener("input", renderTrabajos);
+    
     await loadTrabajos();
   }
 
@@ -692,21 +711,32 @@
   }
 
   function showJobForm(job) {
-    fillPatientSelect($("#trabajoPaciente"), job?.patientId);
+    pacientesCache = getStore("patients");
+    
+    const pacienteSelect = $("#trabajoPaciente");
+    fillPatientSelect(pacienteSelect, job?.patientId);
+    
     const titulo = $("#tituloTrabajo");
     if (titulo) titulo.textContent = job ? "Editar trabajo externo" : "Nuevo trabajo externo";
+    
     const idInput = $("#trabajoId");
     if (idInput) idInput.value = job?.id || "";
+    
     const tipoInput = $("#trabajoTipo");
     if (tipoInput) tipoInput.value = job?.type || "Placa";
+    
     const pedidoInput = $("#trabajoPedido");
     if (pedidoInput) pedidoInput.value = job?.orderDate || todayLocalDate();
+    
     const prometidaInput = $("#trabajoPrometida");
     if (prometidaInput) prometidaInput.value = job?.promisedDate || "";
+    
     const costoInput = $("#trabajoCosto");
     if (costoInput) costoInput.value = job?.cost || "";
+    
     const estadoInput = $("#trabajoEstado");
     if (estadoInput) estadoInput.value = job?.status || "Pendiente";
+    
     openPanel($("#panelTrabajo"));
   }
 
@@ -775,6 +805,22 @@
     }));
   }
 
+  // ========== NOTIFICACIONES ==========
+  function requestNotificationPermission() {
+    if (!("Notification" in window)) {
+      alert("Este navegador no soporta notificaciones.");
+      return false;
+    }
+    Notification.requestPermission().then((result) => {
+      alert(result === "granted" ? "Notificaciones activadas" : "No se activaron");
+    });
+  }
+
+  function bindNotificationButton() {
+    const btn = $("#btnNotificaciones");
+    if (btn) btn.addEventListener("click", requestNotificationPermission);
+  }
+
   // ========== EXPORTAR FUNCIONES GLOBALES ==========
   window.exportarDatos = async function() {
     const data = {};
@@ -819,5 +865,8 @@
     await loadMateriales();
     alert("✅ Todos los materiales marcados como comprados");
   };
+
+  // Inicializar notificaciones
+  bindNotificationButton();
 
 })();
