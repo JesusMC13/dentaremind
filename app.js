@@ -104,7 +104,7 @@
     if (panel) panel.classList.add("hidden");
   }
 
-  // ========== FUNCIÓN PARA CARGAR SELECTS DE PACIENTES (CORREGIDA) ==========
+  // ========== FUNCIÓN PARA CARGAR SELECTS DE PACIENTES ==========
   function cargarSelectPacientes(selectId, selectedId) {
     const select = $(selectId);
     if (!select) return;
@@ -150,7 +150,7 @@
     if (page === "trabajos") initTrabajos();
   });
 
-  // ========== DASHBOARD (CORREGIDO) ==========
+  // ========== DASHBOARD ==========
   function initDashboard() {
     const fechaElem = $("#fechaActual");
     if (fechaElem) {
@@ -178,7 +178,6 @@
     const jobs = getStore("jobs");
     const appointments = getStore("appointments");
     
-    // CORRECCIÓN: Fechas en hora local, no UTC
     const hoy = new Date();
     const today = hoy.toISOString().slice(0, 10);
     
@@ -391,7 +390,9 @@
     event.target.reset();
     closePanel($("#panelPaciente"));
     renderPacientes();
-    actualizarPacientesGlobal();
+    renderDashboard();
+    cargarSelectPacientes("#tratamientoPaciente");
+    cargarSelectPacientes("#trabajoPaciente");
   }
 
   function showAppointmentForm(patientId) {
@@ -429,6 +430,7 @@
     $("#buscarTratamiento")?.addEventListener("input", () => renderTratamientos());
     $("#formTratamiento")?.addEventListener("submit", saveTreatment);
     renderTratamientos();
+    cargarSelectPacientes("#tratamientoPaciente");
   }
 
   function renderTratamientos() {
@@ -762,6 +764,7 @@
     $("#formTrabajo")?.addEventListener("submit", saveJob);
     $("#buscarTrabajo")?.addEventListener("input", () => renderTrabajos());
     renderTrabajos();
+    cargarSelectPacientes("#trabajoPaciente");
   }
 
   function renderTrabajos() {
