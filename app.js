@@ -170,7 +170,7 @@
     renderDashboard();
   }
 
-  function renderDashboard() {
+    function renderDashboard() {
     const patients = getStore("patients");
     const treatments = getStore("treatments");
     const sessions = getStore("sessions");
@@ -178,13 +178,19 @@
     const jobs = getStore("jobs");
     const appointments = getStore("appointments");
     
+    // Fechas en hora local CORRECTA
     const hoy = new Date();
-    const today = hoy.toISOString().slice(0, 10);
+    const today = hoy.getFullYear() + '-' + 
+                  String(hoy.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(hoy.getDate()).padStart(2, '0');
     
     const mananaDate = new Date(hoy);
     mananaDate.setDate(hoy.getDate() + 1);
-    const tomorrow = mananaDate.toISOString().slice(0, 10);
+    const tomorrow = mananaDate.getFullYear() + '-' + 
+                     String(mananaDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                     String(mananaDate.getDate()).padStart(2, '0');
     
+    // Filtrar citas de hoy y mañana
     const citas = appointments
       .filter((item) => {
         if (!item.dateTime) return false;
@@ -198,16 +204,23 @@
       if (!citas.length) {
         citasContainer.innerHTML = '<div class="empty">📅 No hay citas para hoy ni mañana</div>';
       } else {
-        citasContainer.innerHTML = citas.map((cita) => `
-          <div class="card">
-            <h4>${escapeHTML(patientName(cita.patientId, patients))}</h4>
-            <p>${formatDate(cita.dateTime)}</p>
-            <p>${escapeHTML(cita.notes || "Sin notas")}</p>
-          </div>
-        `).join("");
+        citasContainer.innerHTML = citas.map((cita) => {
+          // Formatear fecha y hora para mostrar bonito
+          const fecha = new Date(cita.dateTime);
+          const fechaStr = fecha.toLocaleDateString("es-MX", { day: 'numeric', month: 'long' });
+          const horaStr = fecha.toLocaleTimeString("es-MX", { hour: '2-digit', minute: '2-digit' });
+          return `
+            <div class="card">
+              <h4>${escapeHTML(patientName(cita.patientId, patients))}</h4>
+              <p>📅 ${fechaStr} - ${horaStr}</p>
+              <p>${escapeHTML(cita.notes || "Sin notas")}</p>
+            </div>
+          `;
+        }).join("");
       }
     }
     
+    // Trabajos por vencer
     const vencen = jobs
       .filter((job) => job.status !== "Entregado al paciente" && daysUntil(job.promisedDate) <= 2)
       .sort((a, b) => a.promisedDate.localeCompare(b.promisedDate));
@@ -220,13 +233,14 @@
         trabajosContainer.innerHTML = vencen.map((job) => `
           <div class="card">
             <h4>${escapeHTML(job.type)} - ${escapeHTML(patientName(job.patientId, patients))}</h4>
-            <p>Prometido: ${formatDate(job.promisedDate)}</p>
+            <p>📅 Prometido: ${formatDate(job.promisedDate)}</p>
             <span class="badge">${escapeHTML(job.status)}</span>
           </div>
         `).join("");
       }
     }
     
+    // Materiales pendientes
     const pendientes = materials.filter((item) => !item.purchased);
     const materialesContainer = $("#resumenMateriales");
     if (materialesContainer) {
@@ -242,6 +256,7 @@
       }
     }
     
+    // Saldos pendientes
     const saldos = [];
     for (const t of treatments) {
       const related = sessions.filter((s) => Number(s.treatmentId) === Number(t.id));
