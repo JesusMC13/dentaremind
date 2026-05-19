@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Mi Odontóloga | DentaRemind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="odontologa">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow"><i class="fa-regular fa-heart"></i> Para mi Dra. favorita</p>
+      <h1><i class="fa-solid fa-tooth"></i> Mi Odontóloga</h1>
+    </div>
+    <a class="secondary" href="index.html" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-arrow-left"></i> Volver
+    </a>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+    <a class="active" href="odontologa.html"><i class="fa-regular fa-heart"></i><span> Odontóloga</span></a>
+  </nav>
+
+  <main class="container">
+    <!-- Tarjeta principal de la odontóloga -->
+    <section class="panel hero-card">
+      <div class="hero-content">
+        <div class="hero-text">
+          <span class="badge-special">✨ Especialmente para ti, mi amor ✨</span>
+          <h2>La Dra. más increíble y hermosa</h2>
+          <p>Admiro profundamente tu pasión, tu entrega y el gran corazón que le pones a tu profesión. Ver cómo cuidas cada detalle y das lo mejor por tus pacientes me llena de orgullo todos los días.</p>
+          <div class="frase">
+            <i class="fa-solid fa-quote-left"></i>
+            Detrás de cada sonrisa perfecta, está la dedicación de una odontóloga excepcional
+            <i class="fa-solid fa-quote-right"></i>
+          </div>
+        </div>
+        <div class="hero-emoji">
+          🦷✨💚
+        </div>
+      </div>
+    </section>
+
+    <!-- Carrusel de fotos -->
+    <section class="panel carousel-panel">
+      <h2><i class="fa-solid fa-eye"></i> Fan número uno de tu trabajo</h2>
+      
+      <div class="carousel-container">
+        <button class="carousel-btn prev" id="prevBtn">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="carousel-slides" id="carouselSlides">
+          <div class="slide active">
+            <img src="fotos/foto1.jpeg" alt="Mi amor 1" class="carousel-img">
+          </div>
+          <div class="slide">
+            <img src="fotos/foto2.jpeg" alt="Mi amor 2" class="carousel-img">
+          </div>
+          <div class="slide">
+            <img src="fotos/foto3.jpeg" alt="Mi amor 3" class="carousel-img">
+          </div>
+          <div class="slide">
+            <img src="fotos/foto4.jpeg" alt="Mi amor 4" class="carousel-img">
+          </div>
+        </div>
+        
+        <button class="carousel-btn next" id="nextBtn">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <div class="carousel-dots" id="carouselDots"></div>
+      
+    </section>
+
+    <!-- Mensaje de orgullo y amor -->
+    <section class="panel message-love">
+      <div class="love-content">
+        <i class="fa-solid fa-heart heartbeat"></i>
+        <h3>¡Estoy infinitamente orgulloso de ti!</h3>
+        <div class="love-text">
+          <p>Quiero recordarte hoy y siempre lo <strong>orgulloso que me haces sentir</strong>. No solo por la maravillosa odontóloga en la que te has convertido, sino por la gran mujer, compañera y persona que eres en todo momento.</p>
+          
+          <p>Ver tu constancia, las ganas que le echas a cada consulta y cómo nunca dejas de prepararte para ser la mejor es algo que me inspira muchísimo. <strong>Eres mi mayor ejemplo</strong> de dedicación.</p>
+          
+          <p>Tenerte a mi lado y poder acompañarte en este camino, celebrando cada uno de tus logros y metas cumplidas, es el mejor <strong>regalo que puedo tener</strong>. Me encanta construir ideas y un futuro de la mano contigo.</p>
+          
+          <p><strong>Te amo con todo mi corazón.</strong> Gracias por tu paciencia, por tu amor tan bonito y por hacerme el novio más feliz del mundo.</p>
+        </div>
+        <div class="signature-love">
+          <i class="fa-regular fa-heart"></i>
+          Con todo mi amor, siempre,
+          <br>
+          <strong>Tu desarrollador favorito ❤️</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cualidades -->
+    <section class="panel">
+      <h2><i class="fa-regular fa-star"></i> Lo que más admiro de ti</h2>
+      <div class="qualities-grid">
+        <div class="quality-card">
+          <i class="fa-solid fa-heart"></i>
+          <h4>Tu dedicación</h4>
+          <p>Siempre dando el 100% en tu clínica</p>
+        </div>
+        <div class="quality-card">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+          <h4>Tu empatía</h4>
+          <p>Cuidas a tus pacientes con gran amor</p>
+        </div>
+        <div class="quality-card">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <h4>Tu inteligencia</h4>
+          <p>Admiro tu capacidad y tus ganas de crecer</p>
+        </div>
+        <div class="quality-card">
+          <i class="fa-regular fa-smile"></i>
+          <h4>Tu sonrisa</h4>
+          <p>La que me alegra y me motiva cada día</p>
+        </div>
+        <div class="quality-card">
+          <i class="fa-solid fa-briefcase"></i>
+          <h4>Tu profesionalismo</h4>
+          <p>Eres impecable en lo que haces</p>
+        </div>
+        <div class="quality-card">
+          <i class="fa-regular fa-moon"></i>
+          <h4>Tu apoyo</h4>
+          <p>Mi lugar seguro y mi mejor compañía</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mensaje final -->
+    <section class="panel final-message">
+      <div class="final-content">
+        <i class="fa-regular fa-kiss-wink-heart"></i>
+        <p>Diseñé y programé este espacio pensando en ti, para ayudarte a mantener todo bajo control con tus consultas y materiales, y que tú solo te enfoques en tu talento: <strong>hacer sonreír al mundo</strong>.</p>
+        <p>Espero que te sea de muchísima utilidad en tu día a día. ¡A romperla en la clínica!</p>
+        <span class="final-signature">💚 ¡Te amo, Dra. Yara! 💚</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ========== CARRUSEL DE FOTOS ==========
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsContainer = document.getElementById('carouselDots');
+    let currentIndex = 0;
+    let totalSlides = slides.length;
+
+    // Crear dots
+    function createDots() {
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        if (i === currentIndex) dot.classList.add('active');
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function goToSlide(index) {
+      slides[currentIndex].classList.remove('active');
+      currentIndex = (index + totalSlides) % totalSlides;
+      slides[currentIndex].classList.add('active');
+      updateDots();
+    }
+
+    function updateDots() {
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    // ========== AGREGAR FOTOS NUEVAS ==========
+    const btnAgregarFoto = document.getElementById('btnAgregarFoto');
+    const inputFoto = document.getElementById('inputFoto');
+    const carouselSlides = document.getElementById('carouselSlides');
+
+    if(btnAgregarFoto && inputFoto) {
+      btnAgregarFoto.addEventListener('click', () => {
+        inputFoto.click();
+      });
+
+      inputFoto.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const imgData = event.target.result;
+            
+            // Crear nuevo slide
+            const newSlide = document.createElement('div');
+            newSlide.classList.add('slide');
+            newSlide.innerHTML = `<img src="${imgData}" alt="Nueva foto" class="carousel-img">`;
+            
+            // Agregar al carrusel
+            carouselSlides.appendChild(newSlide);
+            
+            // Actualizar variables
+            totalSlides++;
+            currentIndex = totalSlides - 1;
+            
+            // Actualizar dots
+            createDots();
+            goToSlide(currentIndex);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Inicializar
+    createDots();
+  </script>
+
+  <style>
+    /* Estilos del apartado especial */
+    .hero-card {
+      background: linear-gradient(135deg, #2D6A4F 0%, #40916C 100%);
+      color: white;
+      border: none;
+    }
+    .hero-card .hero-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-card .hero-text {
+      flex: 1;
+    }
+    .badge-special {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      margin-bottom: 16px;
+    }
+    .hero-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: white;
+      border-left: none;
+      padding-left: 0;
+    }
+    .hero-card p {
+      opacity: 0.9;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .frase {
+      font-style: italic;
+      font-size: 0.9rem;
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      display: inline-block;
+    }
+    .frase i {
+      margin: 0 6px;
+      opacity: 0.7;
+    }
+    .hero-emoji {
+      font-size: 4rem;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    /* ========== CARRUSEL ========== */
+    .carousel-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .carousel-slides {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 24px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .slide.active {
+      opacity: 1;
+    }
+    .carousel-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(45, 106, 79, 0.8);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s;
+    }
+    .carousel-btn:hover {
+      background: #2D6A4F;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .prev {
+      left: 10px;
+    }
+    .next {
+      right: 10px;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #D1D5DB;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active {
+      background: #2D6A4F;
+      width: 24px;
+      border-radius: 10px;
+    }
+
+    /* Mensaje de amor */
+    .message-love {
+      background: linear-gradient(135deg, #E8F3EF 0%, #D8F3DC 100%);
+      border: none;
+    }
+    .love-content {
+      text-align: center;
+    }
+    .heartbeat {
+      font-size: 3rem;
+      color: #E5484D;
+      animation: heartbeat 1.5s ease infinite;
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .love-content h3 {
+      font-size: 1.3rem;
+      margin: 16px 0;
+      color: #2D6A4F;
+    }
+    .love-text {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .love-text p {
+      margin: 16px 0;
+      line-height: 1.6;
+      color: #1B2E2A;
+    }
+    .love-text strong {
+      color: #2D6A4F;
+    }
+    .signature-love {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 2px solid rgba(45, 106, 79, 0.3);
+      font-size: 0.9rem;
+      color: #2D6A4F;
+    }
+
+    /* Cualidades */
+    .qualities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .quality-card {
+      background: #F4F7F5;
+      padding: 20px 12px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .quality-card:hover {
+      transform: translateY(-5px);
+      background: #E8F3EF;
+    }
+    .quality-card i {
+      font-size: 1.8rem;
+      color: #2D6A4F;
+      margin-bottom: 10px;
+    }
+    .quality-card h4 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+    .quality-card p {
+      font-size: 0.7rem;
+      color: #5C7A6E;
+    }
+
+    /* Mensaje final */
+    .final-message {
+      text-align: center;
+      background: #FFFFFF;
+      border: 2px solid #E8F3EF;
+    }
+    .final-content i {
+      font-size: 2.5rem;
+      color: #2D6A4F;
+      margin-bottom: 16px;
+    }
+    .final-content p {
+      margin: 12px 0;
+      color: #1B2E2A;
+    }
+    .final-signature {
+      display: block;
+      margin-top: 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2D6A4F;
+    }
+
+    @media (max-width: 768px) {
+      .hero-card h2 {
+        font-size: 1.3rem;
+      }
+      .hero-emoji {
+        font-size: 2.5rem;
+      }
+      .carousel-slides {
+        height: 300px;
+      }
+      .qualities-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .love-text p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</body>
+</html>

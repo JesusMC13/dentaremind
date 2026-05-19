@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Trabajos externos | DentaRemind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="trabajos">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow"><i class="fa-solid fa-flask"></i> Laboratorio dental</p>
+      <h1><i class="fa-solid fa-truck-fast"></i> Trabajos externos</h1>
+    </div>
+    <button class="primary" id="btnNuevoTrabajo"><i class="fa-solid fa-plus"></i> Nuevo</button>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a class="active" href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+  </nav>
+
+  <main class="container">
+    <!-- Panel para agregar/editar trabajo -->
+    <section class="panel form-panel hidden" id="panelTrabajo">
+      <h2 id="tituloTrabajo"><i class="fa-solid fa-plus-circle"></i> Nuevo trabajo externo</h2>
+      <form id="formTrabajo" class="form-grid">
+        <input type="hidden" id="trabajoId">
+        <label>
+          <i class="fa-solid fa-user"></i> Paciente
+          <select id="trabajoPaciente" required>
+            <option value="">Seleccionar paciente...</option>
+          </select>
+        </label>
+        <label>
+          <i class="fa-solid fa-crown"></i> Tipo de trabajo
+          <select id="trabajoTipo" required>
+            <option value="Placa">🦷 Placa dental</option>
+            <option value="Prótesis">🦷 Prótesis</option>
+            <option value="Ortodoncia">😬 Ortodoncia</option>
+            <option value="Corona">👑 Corona</option>
+            <option value="Puente">🌉 Puente</option>
+            <option value="Otros">📦 Otros</option>
+          </select>
+        </label>
+        <label>
+          <i class="fa-regular fa-calendar"></i> Fecha de pedido
+          <input id="trabajoPedido" type="date" required>
+        </label>
+        <label>
+          <i class="fa-regular fa-calendar-check"></i> Fecha prometida
+          <input id="trabajoPrometida" type="date" required>
+        </label>
+        <label>
+          <i class="fa-solid fa-coins"></i> Costo
+          <input id="trabajoCosto" type="number" min="0" step="0.01" required placeholder="$0.00">
+        </label>
+        <label>
+          <i class="fa-solid fa-circle-info"></i> Estado
+          <select id="trabajoEstado" required>
+            <option value="Pendiente">⏳ Pendiente</option>
+            <option value="Recibido">✅ Recibido del laboratorio</option>
+            <option value="Entregado al paciente">🎁 Entregado al paciente</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar</button>
+          <button class="secondary" type="button" id="btnCancelarTrabajo"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista de trabajos -->
+    <section class="panel">
+      <div class="section-head">
+        <h2><i class="fa-solid fa-list"></i> Todos los trabajos</h2>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="search" id="buscarTrabajo" placeholder="Buscar por paciente o tipo...">
+        </div>
+      </div>
+      <div id="listaTrabajos" class="cards"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <style>
+    /* Estilos específicos para trabajos */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      color: #B0C0C4;
+      font-size: 0.9rem;
+    }
+    .search-box .search {
+      padding-left: 40px;
+      width: 260px;
+    }
+    .job-card {
+      transition: all 0.2s;
+    }
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .job-title h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .job-title p {
+      font-size: 0.75rem;
+      color: #5C7A6E;
+    }
+    .job-dates {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+      padding: 8px 0;
+      border-top: 1px solid #E2E8E6;
+      border-bottom: 1px solid #E2E8E6;
+    }
+    .job-dates span {
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #5C7A6E;
+    }
+    .job-dates i {
+      color: #2D6A4F;
+      width: 16px;
+    }
+    .job-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .job-cost {
+      font-weight: 700;
+      color: #2D6A4F;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-pendiente {
+      background: #FFF3E0;
+      color: #E67E22;
+    }
+    .badge-recibido {
+      background: #D8F3DC;
+      color: #2D6A4F;
+    }
+    .badge-entregado {
+      background: #E8F3EF;
+      color: #5C7A6E;
+    }
+    .job-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .job-actions select {
+      padding: 6px 12px;
+      border-radius: 40px;
+      border: 1px solid #E2E8E6;
+      background: white;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .search-box .search {
+        width: 100%;
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .job-header {
+        flex-direction: column;
+      }
+      .job-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .job-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</body>
+</html>

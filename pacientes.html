@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Pacientes | DentaRemind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="pacientes">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow"><i class="fa-regular fa-user"></i> Módulo pacientes</p>
+      <h1><i class="fa-solid fa-users"></i> Pacientes</h1>
+    </div>
+    <button class="primary" id="btnNuevoPaciente"><i class="fa-solid fa-plus"></i> Nuevo</button>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a class="active" href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+  </nav>
+
+  <main class="container">
+    <!-- Panel para agregar/editar paciente -->
+    <section class="panel form-panel hidden" id="panelPaciente">
+      <h2 id="tituloPaciente"><i class="fa-solid fa-user-plus"></i> Nuevo paciente</h2>
+      <form id="formPaciente" class="form-grid">
+        <input type="hidden" id="pacienteId">
+        <label>
+          <i class="fa-regular fa-user"></i> Nombre completo
+          <input id="pacienteNombre" required placeholder="Ej: María González">
+        </label>
+        <label>
+          <i class="fa-solid fa-phone"></i> Teléfono
+          <input id="pacienteTelefono" required placeholder="Ej: 555-123-4567">
+        </label>
+        <label>
+          <i class="fa-regular fa-envelope"></i> Email (opcional)
+          <input id="pacienteEmail" type="email" placeholder="correo@ejemplo.com">
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar</button>
+          <button class="secondary" type="button" id="btnCancelarPaciente"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Panel para programar cita -->
+    <section class="panel form-panel hidden" id="panelCita">
+      <h2 id="tituloCita"><i class="fa-regular fa-calendar-plus"></i> Programar cita</h2>
+      <form id="formCita" class="form-grid">
+        <input type="hidden" id="citaId">
+        <input type="hidden" id="citaPacienteId">
+        <label>
+          <i class="fa-regular fa-calendar"></i> Fecha y hora
+          <input id="citaFecha" type="datetime-local" required>
+        </label>
+        <label>
+          <i class="fa-regular fa-note-sticky"></i> Notas / motivo
+          <textarea id="citaNotas" rows="3" placeholder="Ej: Limpieza dental, revisión..."></textarea>
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar</button>
+          <button class="secondary" type="button" id="btnCancelarCita"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista de pacientes -->
+    <section class="panel">
+      <div class="section-head">
+        <h2><i class="fa-solid fa-list"></i> Lista de pacientes</h2>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="search" id="buscarPaciente" placeholder="Buscar por nombre, teléfono...">
+        </div>
+      </div>
+      <div id="listaPacientes" class="cards"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <style>
+    /* Estilos adicionales específicos para pacientes */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      color: #B0C0C4;
+      font-size: 0.9rem;
+    }
+    .search-box .search {
+      padding-left: 40px;
+      width: 260px;
+    }
+    @media (max-width: 768px) {
+      .search-box .search {
+        width: 100%;
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</body>
+</html>

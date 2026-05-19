@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2E8B57">
+  <title>Tratamientos | Agenda Dental</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="tratamientos">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Pagos por sesión</p>
+      <h1>Tratamientos</h1>
+    </div>
+    <button class="primary" id="btnNuevoTratamiento">➕ Nuevo</button>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><span>🏠</span> Inicio</a>
+    <a href="pacientes.html"><span>📅</span> Pacientes</a>
+    <a class="active" href="tratamientos.html"><span>💰</span> Tratamientos</a>
+    <a href="materiales.html"><span>📝</span> Materiales</a>
+    <a href="trabajos.html"><span>🔧</span> Laboratorio</a>
+  </nav>
+
+  <main class="container">
+    <section class="panel form-panel hidden" id="panelTratamiento">
+      <h2 id="tituloTratamiento">Nuevo tratamiento</h2>
+      <form id="formTratamiento" class="form-grid">
+        <input type="hidden" id="tratamientoId">
+        <label>Paciente
+          <select id="tratamientoPaciente" required></select>
+        </label>
+        <label>Nombre del tratamiento
+          <input id="tratamientoNombre" required placeholder="Ortodoncia, limpieza, resina...">
+        </label>
+        <label>Costo total
+          <input id="tratamientoCosto" type="number" min="0" step="0.01" required>
+        </label>
+        <label>Número total de sesiones
+          <input id="tratamientoSesionesTotal" type="number" min="1" step="1" required>
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit">💾 Guardar</button>
+          <button class="secondary" type="button" id="btnCancelarTratamiento">❌ Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <h2>Todos los tratamientos</h2>
+        <input class="search" id="buscarTratamiento" placeholder="Buscar tratamiento">
+      </div>
+      <div id="listaTratamientos" class="cards"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Detalle Tratamiento | DentaRemind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="tratamiento-detalle">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow"><i class="fa-solid fa-stethoscope"></i> Detalle del tratamiento</p>
+      <h1 id="detalleTitulo"><i class="fa-solid fa-tooth"></i> Tratamiento</h1>
+    </div>
+    <a class="secondary" href="tratamientos.html" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-arrow-left"></i> Volver
+    </a>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a class="active" href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+  </nav>
+
+  <main class="container">
+    <!-- Resumen del tratamiento (se llena con JS) -->
+    <section class="panel" id="resumenDetalle"></section>
+
+    <!-- Panel para agregar/editar sesión -->
+    <section class="panel form-panel hidden" id="panelSesion">
+      <h2 id="tituloSesion"><i class="fa-solid fa-credit-card"></i> Registrar nueva sesión</h2>
+      <form id="formSesion" class="form-grid">
+        <input type="hidden" id="sesionId">
+        <label>
+          <i class="fa-regular fa-calendar"></i> Fecha de la sesión
+          <input id="sesionFecha" type="date" required>
+        </label>
+        <label>
+          <i class="fa-solid fa-coins"></i> Monto pagado
+          <input id="sesionMonto" type="number" min="0" step="0.01" required placeholder="$0.00">
+        </label>
+        <label>
+          <i class="fa-regular fa-note-sticky"></i> Notas (opcional)
+          <textarea id="sesionNotas" rows="3" placeholder="Ej: Pago con tarjeta, efectivo, observaciones..."></textarea>
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar sesión</button>
+          <button class="secondary" type="button" id="btnCancelarSesion"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista de sesiones -->
+    <section class="panel">
+      <div class="section-head">
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Historial de sesiones</h2>
+        <button class="primary" id="btnNuevaSesion"><i class="fa-solid fa-plus"></i> Registrar sesión</button>
+      </div>
+      <div id="listaSesiones" class="cards"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <style>
+    /* Estilos para el detalle */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: #F4F7F5;
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+    .stat-card i {
+      font-size: 1.8rem;
+      color: #2D6A4F;
+      margin-bottom: 8px;
+    }
+    .stat-card .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #1B2E2A;
+    }
+    .stat-card .stat-label {
+      font-size: 0.75rem;
+      color: #5C7A6E;
+      font-weight: 500;
+    }
+    .progress-section {
+      margin: 20px 0;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+      color: #5C7A6E;
+    }
+    .progress-bar {
+      background: #E2E8E6;
+      border-radius: 40px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #2D6A4F, #40916C);
+      height: 100%;
+      border-radius: 40px;
+      transition: width 0.5s ease;
+    }
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</body>
+</html>

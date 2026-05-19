@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>DentaRemind | Asistente Dental</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <!-- OneSignal Notificaciones Push -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "788799cf-c120-492b-922a-b5a229d5ff25",
+        allowLocalhostAsSecureOrigin: true,
+        safari_web_id: "web.onesignal.auto.788799cf-c120-492b-922a-b5a229d5ff25",
+        notifyButton: {
+          enable: true,
+          position: "bottom-right",
+          theme: "default",
+          size: "medium",
+          showCredit: false,
+        },
+      });
+    });
+  </script>
+</head>
+<body data-page="dashboard">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">
+        <i class="fa-regular fa-heart" style="font-size: 0.7rem;"></i> Consultorio dental
+      </p>
+      <h1><i class="fa-solid fa-tooth"></i> DentaRemind</h1>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="icon-button" id="btnExportar" title="Exportar backup">
+        <i class="fa-solid fa-download"></i>
+      </button>
+      <label class="icon-button" for="importFile" title="Importar backup" style="cursor: pointer;">
+        <i class="fa-solid fa-upload"></i>
+      </label>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+      <button class="icon-button" id="btnNotificaciones" title="Activar notificaciones locales">
+        <i class="fa-solid fa-bell"></i>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="active" href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+    <a href="odontologa.html"><i class="fa-regular fa-heart"></i><span> Odontóloga</span></a>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h2><i class="fa-regular fa-calendar-check"></i> Resumen del día</h2>
+        <p id="fechaActual"></p>
+      </div>
+      <button class="primary" id="btnActualizarDashboard">
+        <i class="fa-solid fa-rotate-right"></i> Actualizar
+      </button>
+    </section>
+
+    <div class="dashboard-grid">
+      <article class="panel">
+        <h3><i class="fa-regular fa-calendar"></i> Citas próximas</h3>
+        <div id="resumenCitas" class="stack"></div>
+      </article>
+
+      <article class="panel">
+        <h3><i class="fa-solid fa-truck-fast"></i> Trabajos por vencer</h3>
+        <div id="resumenTrabajos" class="stack"></div>
+      </article>
+
+      <article class="panel">
+        <h3><i class="fa-solid fa-clipboard-list"></i> Materiales pendientes</h3>
+        <div id="resumenMateriales" class="stack"></div>
+      </article>
+
+      <article class="panel">
+        <h3><i class="fa-solid fa-coins"></i> Saldos por cobrar</h3>
+        <div id="resumenTratamientos" class="stack"></div>
+      </article>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Exportar backup
+    document.getElementById("btnExportar")?.addEventListener("click", () => {
+      if (typeof exportarDatos === 'function') exportarDatos();
+      else console.log("exportarDatos no definida aún");
+    });
+    
+    // Importar backup
+    document.getElementById("importFile")?.addEventListener("change", (e) => {
+      if (e.target.files[0] && typeof importarDatos === 'function') {
+        importarDatos(e.target.files[0]);
+      }
+      e.target.value = "";
+    });
+  </script>
+</body>
+</html>

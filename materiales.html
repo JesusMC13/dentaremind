@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2D6A4F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Materiales | DentaRemind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-page="materiales">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow"><i class="fa-solid fa-boxes"></i> Bloc de compras</p>
+      <h1><i class="fa-solid fa-clipboard-list"></i> Materiales</h1>
+    </div>
+    <button class="primary" id="btnNuevoMaterial"><i class="fa-solid fa-plus"></i> Nuevo</button>
+  </header>
+
+  <nav class="tabs">
+    <a href="index.html"><i class="fa-solid fa-chart-line"></i><span> Inicio</span></a>
+    <a href="pacientes.html"><i class="fa-solid fa-users"></i><span> Pacientes</span></a>
+    <a href="tratamientos.html"><i class="fa-solid fa-stethoscope"></i><span> Tratamientos</span></a>
+    <a class="active" href="materiales.html"><i class="fa-solid fa-boxes"></i><span> Materiales</span></a>
+    <a href="trabajos.html"><i class="fa-solid fa-flask"></i><span> Laboratorio</span></a>
+  </nav>
+
+  <main class="container">
+    <!-- Panel para agregar/editar material -->
+    <section class="panel form-panel hidden" id="panelMaterial">
+      <h2 id="tituloMaterial"><i class="fa-solid fa-plus-circle"></i> Nuevo material</h2>
+      <form id="formMaterial" class="form-grid">
+        <input type="hidden" id="materialId">
+        <label>
+          <i class="fa-solid fa-tag"></i> Nombre del material
+          <input id="materialNombre" required placeholder="Ej: Guantes, Anestesia, Fresas...">
+        </label>
+        <label>
+          <i class="fa-solid fa-box"></i> Cantidad
+          <input id="materialCantidad" required placeholder="Ej: 2 cajas, 1 paquete, 10 unidades...">
+        </label>
+        <label>
+          <i class="fa-solid fa-layer-group"></i> Categoría (opcional)
+          <input id="materialCategoria" placeholder="Ej: Clínico, Limpieza, Laboratorio...">
+        </label>
+        <div class="actions">
+          <button class="primary" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar</button>
+          <button class="secondary" type="button" id="btnCancelarMaterial"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista de materiales -->
+    <section class="panel">
+      <div class="section-head">
+        <h2><i class="fa-solid fa-list"></i> Lista de materiales</h2>
+        <div class="filters-group">
+          <div class="filters">
+            <button class="chip active" data-filtro-material="todos"><i class="fa-solid fa-circle"></i> Todos</button>
+            <button class="chip" data-filtro-material="pendientes"><i class="fa-solid fa-clock"></i> Pendientes</button>
+            <button class="chip" data-filtro-material="comprados"><i class="fa-solid fa-check-circle"></i> Comprados</button>
+          </div>
+          <button class="secondary" id="btnMarcarTodo"><i class="fa-solid fa-check-double"></i> Marcar todo</button>
+        </div>
+      </div>
+      <div id="listaMateriales" class="cards"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <style>
+    /* Estilos específicos para materiales */
+    .filters-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      padding: 8px 16px;
+      background: #F1F5F9;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #E2E8E6;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip i {
+      font-size: 0.7rem;
+    }
+    .chip:hover {
+      background: #E8F3EF;
+      border-color: #2D6A4F;
+    }
+    .chip.active {
+      background: #2D6A4F;
+      color: white;
+      border-color: #2D6A4F;
+    }
+    .material-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .material-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+    }
+    .material-info input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #2D6A4F;
+    }
+    .material-details h4 {
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+    .material-details p {
+      font-size: 0.75rem;
+      color: #5C7A6E;
+    }
+    .material-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .material-done {
+      opacity: 0.65;
+      background: #F9FBF9;
+    }
+    .material-done .material-details h4 {
+      text-decoration: line-through;
+    }
+    .badge-purchased {
+      background: #D8F3DC;
+      color: #2D6A4F;
+    }
+    .badge-pending {
+      background: #FFF3E0;
+      color: #E67E22;
+    }
+    @media (max-width: 768px) {
+      .filters-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filters {
+        justify-content: center;
+      }
+      .material-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .material-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</body>
+</html>
