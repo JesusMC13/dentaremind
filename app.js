@@ -12,7 +12,7 @@
   let trabajosCache = [];
   let filtroMaterial = "todos";
 
-  // ========== FUNCIONES BASE DE localStorage (CORREGIDAS) ==========
+  // ========== FUNCIONES BASE DE localStorage ==========
   function getStore(storeName) {
     const data = localStorage.getItem(storeName);
     return data ? JSON.parse(data) : [];
@@ -109,10 +109,20 @@
 
   // ========== FUNCIÓN CORREGIDA PARA LLENAR SELECTS ==========
   function fillPatientSelect(selectElement, selectedId) {
-    if (!selectElement) return;
+    if (!selectElement) {
+      console.error("fillPatientSelect: selectElement es null");
+      return;
+    }
     
-    // Obtener pacientes frescos directamente de localStorage
-    const pacientes = getStore("patients");
+    let pacientes = [];
+    try {
+      const data = localStorage.getItem("patients");
+      pacientes = data ? JSON.parse(data) : [];
+    } catch(e) {
+      console.error("Error al leer pacientes:", e);
+    }
+    
+    console.log("fillPatientSelect - Pacientes encontrados:", pacientes.length);
     
     if (!pacientes.length) {
       selectElement.innerHTML = '<option value="">⚠️ Primero crea un paciente</option>';
@@ -144,72 +154,124 @@
     if (page === "trabajos") initTrabajos();
   });
 
-  // ========== DASHBOARD ==========
+  // ========== DASHBOARD CORREGIDO ==========
   async function initDashboard() {
     const fechaElem = $("#fechaActual");
     if (fechaElem) {
-      fechaElem.textContent = new Date().toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      fechaElem.textContent = new Date().toLocaleDateString("es-MX", { 
+        weekday: "long", 
+        year: "numeric", 
+        month: "long", 
+        day: "numeric" 
+      });
     }
+    
     const btnActualizar = $("#btnActualizarDashboard");
-    if (btnActualizar) btnActualizar.addEventListener("click", renderDashboard);
+    if (btnActualizar) {
+      btnActualizar.addEventListener("click", () => {
+        console.log("Actualizando dashboard...");
+        renderDashboard();
+      });
+    }
+    
     await renderDashboard();
   }
 
   async function renderDashboard() {
-    const patients = await all("patients");
-    const treatments = await all("treatments");
-    const sessions = await all("sessions");
-    const materials = await all("materials");
-    const jobs = await all("jobs");
-    const appointments = await all("appointments");
+    console.log("renderDashboard ejecutándose");
+    
+    const patients = getStore("patients");
+    const treatments = getStore("treatments");
+    const sessions = getStore("sessions");
+    const materials = getStore("materials");
+    const jobs = getStore("jobs");
+    const appointments = getStore("appointments");
     
     pacientesCache = patients;
     sesionesCache = sessions;
-
+    
+    console.log("Dashboard - Pacientes:", patients.length);
+    console.log("Dashboard - Citas:", appointments.length);
+    console.log("Dashboard - Tratamientos:", treatments.length);
+    
     const today = todayLocalDate();
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    
+    // Citas de hoy y mañana
     const citas = appointments
       .filter((item) => item.dateTime && [today, tomorrow].includes(item.dateTime.slice(0, 10)))
       .sort((a, b) => a.dateTime.localeCompare(b.dateTime));
-    renderList($("#resumenCitas"), citas, (cita) => `
-      <div class="card">
-        <h4>${escapeHTML(patientName(cita.patientId))}</h4>
-        <p>${formatDate(cita.dateTime)}</p>
-        <p>${escapeHTML(cita.notes || "Sin notas")}</p>
-      </div>`, "No hay citas para hoy ni mañana.");
-
+    
+    const citasContainer = $("#resumenCitas");
+    if (citasContainer) {
+      if (!citas.length) {
+        citasContainer.innerHTML = '<div class="empty">📅 No hay citas para hoy ni mañana</div>';
+      } else {
+        citasContainer.innerHTML = citas.map((cita) => `
+          <div class="card">
+            <h4>${escapeHTML(patientName(cita.patientId))}</h4>
+            <p>${formatDate(cita.dateTime)}</p>
+            <p>${escapeHTML(cita.notes || "Sin notas")}</p>
+          </div>
+        `).join("");
+      }
+    }
+    
+    // Trabajos por vencer
     const vencen = jobs
       .filter((job) => job.status !== "Entregado al paciente" && daysUntil(job.promisedDate) <= 2)
       .sort((a, b) => a.promisedDate.localeCompare(b.promisedDate));
-    renderList($("#resumenTrabajos"), vencen, (job) => `
-      <div class="card">
-        <h4>${escapeHTML(job.type)} - ${escapeHTML(patientName(job.patientId))}</h4>
-        <p>Prometido: ${formatDate(job.promisedDate)}</p>
-        <span class="badge">${escapeHTML(job.status)}</span>
-      </div>`, "No hay trabajos por vencer.");
-
+    
+    const trabajosContainer = $("#resumenTrabajos");
+    if (trabajosContainer) {
+      if (!vencen.length) {
+        trabajosContainer.innerHTML = '<div class="empty">🔧 No hay trabajos por vencer</div>';
+      } else {
+        trabajosContainer.innerHTML = vencen.map((job) => `
+          <div class="card">
+            <h4>${escapeHTML(job.type)} - ${escapeHTML(patientName(job.patientId))}</h4>
+            <p>Prometido: ${formatDate(job.promisedDate)}</p>
+            <span class="badge">${escapeHTML(job.status)}</span>
+          </div>
+        `).join("");
+      }
+    }
+    
+    // Materiales pendientes
     const pendientes = materials.filter((item) => !item.purchased);
-    renderList($("#resumenMateriales"), pendientes, (item) => `
-      <div class="card">
-        <h4>${escapeHTML(item.name)}</h4>
-        <p>${escapeHTML(item.quantity)} ${item.category ? "· " + escapeHTML(item.category) : ""}</p>
-      </div>`, "No hay materiales pendientes.");
-
+    const materialesContainer = $("#resumenMateriales");
+    if (materialesContainer) {
+      if (!pendientes.length) {
+        materialesContainer.innerHTML = '<div class="empty">📝 No hay materiales pendientes</div>';
+      } else {
+        materialesContainer.innerHTML = pendientes.map((item) => `
+          <div class="card">
+            <h4>${escapeHTML(item.name)}</h4>
+            <p>${escapeHTML(item.quantity)} ${item.category ? "· " + escapeHTML(item.category) : ""}</p>
+          </div>
+        `).join("");
+      }
+    }
+    
+    // Saldos pendientes
     const saldos = treatments
       .map((tratamiento) => treatmentStats(tratamiento, sessions))
       .filter((item) => item.balance > 0);
-    renderList($("#resumenTratamientos"), saldos, (item) => `
-      <div class="card">
-        <h4>${escapeHTML(item.treatment.name)}</h4>
-        <p>${escapeHTML(patientName(item.treatment.patientId))}</p>
-        <p>Saldo: <strong>${money(item.balance)}</strong></p>
-      </div>`, "No hay saldos pendientes.");
-  }
-
-  function renderList(container, items, template, emptyText) {
-    if (!container) return;
-    if (!items.length) return setEmpty(container, emptyText);
-    container.innerHTML = items.map(template).join("");
+    
+    const saldosContainer = $("#resumenTratamientos");
+    if (saldosContainer) {
+      if (!saldos.length) {
+        saldosContainer.innerHTML = '<div class="empty">💰 No hay saldos pendientes</div>';
+      } else {
+        saldosContainer.innerHTML = saldos.map((item) => `
+          <div class="card">
+            <h4>${escapeHTML(item.treatment.name)}</h4>
+            <p>${escapeHTML(patientName(item.treatment.patientId))}</p>
+            <p>Saldo: <strong>${money(item.balance)}</strong></p>
+          </div>
+        `).join("");
+      }
+    }
   }
 
   // ========== PACIENTES ==========
@@ -297,6 +359,7 @@
     event.target.reset();
     closePanel($("#panelPaciente"));
     await loadPacientes();
+    renderDashboard();
   }
 
   function bindPatientActions() {
@@ -333,6 +396,7 @@
     event.target.reset();
     closePanel($("#panelCita"));
     await loadPacientes();
+    renderDashboard();
   }
 
   async function deletePatient(id) {
@@ -361,9 +425,10 @@
       }
     }
     await loadPacientes();
+    renderDashboard();
   }
 
-  // ========== TRATAMIENTOS (CORREGIDO) ==========
+  // ========== TRATAMIENTOS CORREGIDO ==========
   async function initTratamientos() {
     pacientesCache = await all("patients");
     
@@ -391,11 +456,18 @@
   }
 
   function showTreatmentForm(treatment) {
+    console.log("showTreatmentForm - Abriendo formulario");
+    
     const pacienteSelect = $("#tratamientoPaciente");
+    if (!pacienteSelect) {
+      console.error("No se encontró el select #tratamientoPaciente");
+      return;
+    }
+    
     fillPatientSelect(pacienteSelect, treatment?.patientId);
     
     const titulo = $("#tituloTratamiento");
-    if (titulo) titulo.textContent = treatment ? "Editar tratamiento" : "Nuevo tratamiento";
+    if (titulo) titulo.textContent = treatment ? "✏️ Editar tratamiento" : "➕ Nuevo tratamiento";
     
     const idInput = $("#tratamientoId");
     if (idInput) idInput.value = treatment?.id || "";
@@ -438,6 +510,7 @@
     event.target.reset();
     closePanel($("#panelTratamiento"));
     await loadTratamientos();
+    renderDashboard();
   }
 
   function renderTratamientos() {
@@ -506,6 +579,7 @@
     }
     await remove("treatments", id);
     await loadTratamientos();
+    renderDashboard();
   }
 
   // ========== DETALLE TRATAMIENTO ==========
@@ -577,6 +651,7 @@
     event.target.reset();
     closePanel($("#panelSesion"));
     await loadDetalle(treatmentId);
+    renderDashboard();
   }
 
   function renderSesiones(treatmentId) {
@@ -604,6 +679,7 @@
       if (!confirm("¿Eliminar esta sesión?")) return;
       await remove("sessions", btn.dataset.deleteSession);
       await loadDetalle(treatmentId);
+      renderDashboard();
     }));
   }
 
@@ -690,15 +766,17 @@
     event.target.reset();
     closePanel($("#panelMaterial"));
     await loadMateriales();
+    renderDashboard();
   }
 
   async function toggleMaterial(id, purchased) {
     const item = await get("materials", id);
     await put("materials", { ...item, purchased });
     await loadMateriales();
+    renderDashboard();
   }
 
-  // ========== TRABAJOS EXTERNOS (CORREGIDO) ==========
+  // ========== TRABAJOS EXTERNOS CORREGIDO ==========
   async function initTrabajos() {
     pacientesCache = await all("patients");
     
@@ -725,11 +803,18 @@
   }
 
   function showJobForm(job) {
+    console.log("showJobForm - Abriendo formulario");
+    
     const pacienteSelect = $("#trabajoPaciente");
+    if (!pacienteSelect) {
+      console.error("No se encontró el select #trabajoPaciente");
+      return;
+    }
+    
     fillPatientSelect(pacienteSelect, job?.patientId);
     
     const titulo = $("#tituloTrabajo");
-    if (titulo) titulo.textContent = job ? "Editar trabajo externo" : "Nuevo trabajo externo";
+    if (titulo) titulo.textContent = job ? "✏️ Editar trabajo externo" : "➕ Nuevo trabajo externo";
     
     const idInput = $("#trabajoId");
     if (idInput) idInput.value = job?.id || "";
@@ -781,6 +866,7 @@
     event.target.reset();
     closePanel($("#panelTrabajo"));
     await loadTrabajos();
+    renderDashboard();
   }
 
   function renderTrabajos() {
@@ -816,12 +902,14 @@
       const job = await get("jobs", select.dataset.statusJob);
       await put("jobs", { ...job, status: select.value });
       await loadTrabajos();
+      renderDashboard();
     }));
     $$("[data-edit-job]").forEach((btn) => btn.addEventListener("click", async () => showJobForm(await get("jobs", btn.dataset.editJob))));
     $$("[data-delete-job]").forEach((btn) => btn.addEventListener("click", async () => {
       if (!confirm("¿Eliminar este trabajo externo?")) return;
       await remove("jobs", btn.dataset.deleteJob);
       await loadTrabajos();
+      renderDashboard();
     }));
   }
 
@@ -883,6 +971,7 @@
       await put("materials", { ...material, purchased: true });
     }
     await loadMateriales();
+    renderDashboard();
     alert("✅ Todos los materiales marcados como comprados");
   };
 
