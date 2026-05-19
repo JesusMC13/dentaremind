@@ -12,7 +12,7 @@
   let trabajosCache = [];
   let filtroMaterial = "todos";
 
-  // ========== FUNCIONES DE localStorage ==========
+  // ========== FUNCIONES BASE DE localStorage (CORREGIDAS) ==========
   function getStore(storeName) {
     const data = localStorage.getItem(storeName);
     return data ? JSON.parse(data) : [];
@@ -107,21 +107,25 @@
     if (panel) panel.classList.add("hidden");
   }
 
-  function fillPatientSelect(select, selectedId) {
-    if (!select) return;
+  // ========== FUNCIÓN CORREGIDA PARA LLENAR SELECTS ==========
+  function fillPatientSelect(selectElement, selectedId) {
+    if (!selectElement) return;
     
-    pacientesCache = getStore("patients");
+    // Obtener pacientes frescos directamente de localStorage
+    const pacientes = getStore("patients");
     
-    if (!pacientesCache.length) {
-      select.innerHTML = `<option value="">Primero crea un paciente</option>`;
+    if (!pacientes.length) {
+      selectElement.innerHTML = '<option value="">⚠️ Primero crea un paciente</option>';
       return;
     }
     
-    select.innerHTML = `<option value="">Seleccionar paciente...</option>` + 
-      pacientesCache
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((p) => `<option value="${p.id}" ${Number(selectedId) === Number(p.id) ? "selected" : ""}>${escapeHTML(p.name)}</option>`)
-        .join("");
+    let html = '<option value="">📋 Seleccionar paciente...</option>';
+    pacientes.sort((a, b) => a.name.localeCompare(b.name));
+    for (const p of pacientes) {
+      const selected = (Number(selectedId) === Number(p.id)) ? 'selected' : '';
+      html += `<option value="${p.id}" ${selected}>${escapeHTML(p.name)}</option>`;
+    }
+    selectElement.innerHTML = html;
   }
 
   // ========== INICIALIZACIÓN ==========
@@ -359,12 +363,14 @@
     await loadPacientes();
   }
 
-  // ========== TRATAMIENTOS ==========
+  // ========== TRATAMIENTOS (CORREGIDO) ==========
   async function initTratamientos() {
     pacientesCache = await all("patients");
     
     const btnNuevo = $("#btnNuevoTratamiento");
-    if (btnNuevo) btnNuevo.addEventListener("click", () => showTreatmentForm());
+    if (btnNuevo) btnNuevo.addEventListener("click", () => {
+      showTreatmentForm();
+    });
     
     const btnCancelar = $("#btnCancelarTratamiento");
     if (btnCancelar) btnCancelar.addEventListener("click", () => closePanel($("#panelTratamiento")));
@@ -385,8 +391,6 @@
   }
 
   function showTreatmentForm(treatment) {
-    pacientesCache = getStore("patients");
-    
     const pacienteSelect = $("#tratamientoPaciente");
     fillPatientSelect(pacienteSelect, treatment?.patientId);
     
@@ -411,13 +415,21 @@
   async function saveTreatment(event) {
     event.preventDefault();
     const id = $("#tratamientoId")?.value;
+    const patientId = $("#tratamientoPaciente")?.value;
+    
+    if (!patientId) {
+      alert("❌ Selecciona un paciente");
+      return;
+    }
+    
     const payload = {
       id: id ? Number(id) : undefined,
-      patientId: Number($("#tratamientoPaciente")?.value),
+      patientId: Number(patientId),
       name: $("#tratamientoNombre")?.value.trim() || "",
       totalCost: Number($("#tratamientoCosto")?.value || 0),
       totalSessions: Number($("#tratamientoSesionesTotal")?.value || 1)
     };
+    
     if (id) {
       await put("treatments", payload);
     } else {
@@ -686,12 +698,14 @@
     await loadMateriales();
   }
 
-  // ========== TRABAJOS EXTERNOS ==========
+  // ========== TRABAJOS EXTERNOS (CORREGIDO) ==========
   async function initTrabajos() {
     pacientesCache = await all("patients");
     
     const btnNuevo = $("#btnNuevoTrabajo");
-    if (btnNuevo) btnNuevo.addEventListener("click", () => showJobForm());
+    if (btnNuevo) btnNuevo.addEventListener("click", () => {
+      showJobForm();
+    });
     
     const btnCancelar = $("#btnCancelarTrabajo");
     if (btnCancelar) btnCancelar.addEventListener("click", () => closePanel($("#panelTrabajo")));
@@ -711,8 +725,6 @@
   }
 
   function showJobForm(job) {
-    pacientesCache = getStore("patients");
-    
     const pacienteSelect = $("#trabajoPaciente");
     fillPatientSelect(pacienteSelect, job?.patientId);
     
@@ -743,9 +755,16 @@
   async function saveJob(event) {
     event.preventDefault();
     const id = $("#trabajoId")?.value;
+    const patientId = $("#trabajoPaciente")?.value;
+    
+    if (!patientId) {
+      alert("❌ Selecciona un paciente");
+      return;
+    }
+    
     const payload = {
       id: id ? Number(id) : undefined,
-      patientId: Number($("#trabajoPaciente")?.value),
+      patientId: Number(patientId),
       type: $("#trabajoTipo")?.value || "Placa",
       orderDate: $("#trabajoPedido")?.value,
       promisedDate: $("#trabajoPrometida")?.value,
@@ -753,6 +772,7 @@
       status: $("#trabajoEstado")?.value || "Pendiente",
       notifiedTwoDays: false
     };
+    
     if (id) {
       await put("jobs", payload);
     } else {
@@ -812,7 +832,7 @@
       return false;
     }
     Notification.requestPermission().then((result) => {
-      alert(result === "granted" ? "Notificaciones activadas" : "No se activaron");
+      alert(result === "granted" ? "✅ Notificaciones activadas" : "❌ No se activaron");
     });
   }
 
@@ -866,7 +886,7 @@
     alert("✅ Todos los materiales marcados como comprados");
   };
 
-  // Inicializar notificaciones
+  // Inicializar botón de notificaciones
   bindNotificationButton();
 
 })();
