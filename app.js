@@ -104,7 +104,7 @@
     if (panel) panel.classList.add("hidden");
   }
 
-  // ========== FUNCIÓN PARA CARGAR SELECTS DE PACIENTES ==========
+  // ========== FUNCIÓN PARA CARGAR SELECTS DE PACIENTES (CORREGIDA) ==========
   function cargarSelectPacientes(selectId, selectedId) {
     const select = $(selectId);
     if (!select) return;
@@ -118,11 +118,24 @@
     
     let html = '<option value="">📋 Seleccionar paciente...</option>';
     pacientes.sort((a, b) => a.name.localeCompare(b.name));
+    
     for (const p of pacientes) {
-      const selected = (Number(selectedId) === Number(p.id)) ? 'selected' : '';
-      html += `<option value="${p.id}" ${selected}>${escapeHTML(p.name)}</option>`;
+      let selected = false;
+      if (selectedId !== undefined && selectedId !== null && !isNaN(selectedId)) {
+        selected = (Number(selectedId) === Number(p.id));
+      }
+      html += `<option value="${p.id}" ${selected ? 'selected' : ''}>${escapeHTML(p.name)}</option>`;
     }
     select.innerHTML = html;
+  }
+
+  // ========== FUNCIÓN PARA ACTUALIZAR GLOBALMENTE ==========
+  function actualizarPacientesGlobal() {
+    cargarSelectPacientes("#tratamientoPaciente");
+    cargarSelectPacientes("#trabajoPaciente");
+    renderDashboard();
+    if (document.body.dataset.page === "tratamientos") renderTratamientos();
+    if (document.body.dataset.page === "trabajos") renderTrabajos();
   }
 
   // ========== INICIALIZACIÓN ==========
@@ -137,7 +150,7 @@
     if (page === "trabajos") initTrabajos();
   });
 
-  // ========== DASHBOARD ==========
+  // ========== DASHBOARD (CORREGIDO) ==========
   function initDashboard() {
     const fechaElem = $("#fechaActual");
     if (fechaElem) {
@@ -165,12 +178,20 @@
     const jobs = getStore("jobs");
     const appointments = getStore("appointments");
     
-    const today = todayLocalDate();
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    // CORRECCIÓN: Fechas en hora local, no UTC
+    const hoy = new Date();
+    const today = hoy.toISOString().slice(0, 10);
     
-    // Citas de hoy y mañana
+    const mananaDate = new Date(hoy);
+    mananaDate.setDate(hoy.getDate() + 1);
+    const tomorrow = mananaDate.toISOString().slice(0, 10);
+    
     const citas = appointments
-      .filter((item) => item.dateTime && (item.dateTime.slice(0, 10) === today || item.dateTime.slice(0, 10) === tomorrow))
+      .filter((item) => {
+        if (!item.dateTime) return false;
+        const fechaCita = item.dateTime.slice(0, 10);
+        return fechaCita === today || fechaCita === tomorrow;
+      })
       .sort((a, b) => a.dateTime.localeCompare(b.dateTime));
     
     const citasContainer = $("#resumenCitas");
@@ -188,7 +209,6 @@
       }
     }
     
-    // Trabajos por vencer
     const vencen = jobs
       .filter((job) => job.status !== "Entregado al paciente" && daysUntil(job.promisedDate) <= 2)
       .sort((a, b) => a.promisedDate.localeCompare(b.promisedDate));
@@ -208,7 +228,6 @@
       }
     }
     
-    // Materiales pendientes
     const pendientes = materials.filter((item) => !item.purchased);
     const materialesContainer = $("#resumenMateriales");
     if (materialesContainer) {
@@ -224,7 +243,6 @@
       }
     }
     
-    // Saldos pendientes
     const saldos = [];
     for (const t of treatments) {
       const related = sessions.filter((s) => Number(s.treatmentId) === Number(t.id));
@@ -342,7 +360,7 @@
     }
     
     renderPacientes();
-    renderDashboard();
+    actualizarPacientesGlobal();
   };
 
   function showPatientForm(patient) {
@@ -373,11 +391,7 @@
     event.target.reset();
     closePanel($("#panelPaciente"));
     renderPacientes();
-    renderDashboard();
-    
-    // Recargar selects en otras páginas si están abiertas
-    cargarSelectPacientes("#tratamientoPaciente");
-    cargarSelectPacientes("#trabajoPaciente");
+    actualizarPacientesGlobal();
   }
 
   function showAppointmentForm(patientId) {
